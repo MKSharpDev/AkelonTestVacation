@@ -19,7 +19,6 @@ namespace PracticTask1
 
         static void Main(string[] args)
         {
-            Stopwatch stopwatch = new Stopwatch();
             Random gen = new Random();
 
             var VacationDictionary = new Dictionary<string, List<DateTime>>()
@@ -101,7 +100,6 @@ namespace PracticTask1
                         }
                     }
                 }
-                Console.WriteLine(stopwatch);
                 
             }
             foreach (var VacationList in VacationDictionary)
