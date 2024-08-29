@@ -89,7 +89,7 @@ public class VacationPlanner
 
                             //проверяем нет ли конца отпуска ранее в течении месяца от планируемого начала отпуска
                             existEnd = plan.Value.Any(element => element.EndDate <= vacationStartDate && element.EndDate >= vacationStartDate.AddMonths(-1));
-                            if (!existStart && !existEnd)
+                            if (!existStart || !existEnd)
                             {
                                 canCreateVacation = true;
                             }
