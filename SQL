@@ -1,0 +1,135 @@
+-- create a table
+CREATE TABLE  Addreses (
+  ID INTEGER,
+  Region VARCHAR(255),
+  City VARCHAR(255),
+  Street VARCHAR(255),
+  House INTEGER,
+  PRIMARY KEY (ID)
+);
+
+CREATE TABLE  Persons (
+  ID INTEGER PRIMARY KEY,
+  Name VARCHAR(255),
+  Surname VARCHAR(255),
+  Patronymic VARCHAR(255),
+  Organization_name VARCHAR(255),
+  AddressID INTEGER,
+  PassportIndex INTEGER,
+  FOREIGN KEY (AddressID) REFERENCES Addreses(ID)
+);
+
+
+CREATE TABLE Customers (
+  ID INTEGER,
+  OrganizationName TEXT,
+  AddressID INTEGER,
+  ContactPersonID INTEGER,
+  PRIMARY KEY (ID),
+  FOREIGN KEY (AddressID) REFERENCES Addreses(ID),
+  FOREIGN KEY (ContactPersonID) REFERENCES Persons (ID)    
+);
+
+
+CREATE TABLE Orders (
+  ID INTEGER PRIMARY KEY,
+  ProductID INTEGER,
+  CustomerID INTEGER,
+  OrderNumber INTEGER,
+  ProductAmount INTEGER,
+  OrderDate TIMESTAMP, 
+  FOREIGN KEY (CustomerID) REFERENCES customers(ID)
+);
+
+CREATE TABLE Products (
+  ID INTEGER PRIMARY KEY,
+  Name VARCHAR(255),
+  Measure VARCHAR(255),
+  Price DECIMAL(13, 4) 
+);
+
+CREATE TABLE Storge_workers (
+  ID INTEGER PRIMARY KEY,
+  PersonID INTEGER,
+  OrganizationName VARCHAR(255),
+  FOREIGN KEY (PersonID) REFERENCES Persons(ID)    
+);
+
+
+CREATE TABLE Storages (
+  ID INTEGER PRIMARY KEY,
+  StoreroomID INTEGER,
+  WorkerID INTEGER,
+  ProductID INTEGER,
+  ProductAmount INTEGER,
+  DeliveryDate TIMESTAMP,
+  FOREIGN KEY (WorkerID) REFERENCES Storge_workers(ID),
+  FOREIGN KEY (ProductID) REFERENCES Products(ID)
+);
+
+
+
+-- insert some values
+INSERT INTO Addreses VALUES (1, 'Пензенская область', 'Клин', ' пл. Сталина', 74);
+INSERT INTO Addreses VALUES (2, 'Брянская область', 'Красногорск', ' проезд Ленина', 53);
+INSERT INTO Addreses VALUES (3, 'Оренбургская область', 'Воскресенск', ' проезд Чехова', 76);
+INSERT INTO Addreses VALUES (4, 'Ивановская область', 'Орехово-Зуево', ' ер. Чехова', 59);
+
+INSERT INTO Persons VALUES (1, 'Иванов', 'Иван', 'Иванович', 'Иванович', 1, 132);
+INSERT INTO Persons VALUES (2, 'Иванов', 'Иван', 'Иванович', 'Иванович', 1, 122);
+INSERT INTO Persons VALUES (3, 'Иванов', 'Иван', 'Иванович', 'Иванович', 1, 1332);
+INSERT INTO Persons VALUES (4, 'Иванов', 'Иван', 'Иванович', 'Иванович', 1, 1312);
+
+
+INSERT INTO Customers VALUES (287, 'ООО Надежда', 1, 1);
+INSERT INTO Customers VALUES (820, 'ООО Звезда', 2, 2);
+INSERT INTO Customers VALUES (748, 'ООО Звезда', 3, 3);
+INSERT INTO Customers VALUES (633, 'ООО Звезда', 4, 4);
+
+INSERT INTO Orders VALUES (104, 404 , 287 , 233, 30 , '2023-03-15');
+INSERT INTO Orders VALUES (110, 929 , 748 , 238, 27 , '2023-06-16');
+INSERT INTO Orders VALUES (111, 832 , 633 , 239, 10 , '2023-06-22');
+INSERT INTO Orders VALUES (109, 210 , 633 , 237, 14 , '2024-08-23');
+INSERT INTO Orders VALUES (120, 105 , 287 , 237, 20 , '2024-08-23');
+
+
+INSERT INTO Products VALUES (404,  'Молоко' , 'Литр' , 120.00 );
+INSERT INTO Products VALUES (929,  'Апельсиновый сок' , 'Литр' , 100.00 );
+INSERT INTO Products VALUES (210,  'Йогурт' , 'Литр' , 75.00 );
+INSERT INTO Products VALUES (832,  'Чай' , 'Килограмм' , 105.00 );
+INSERT INTO Products VALUES (104,  'Вафли' , 'Килограмм' , 130.00 );
+INSERT INTO Products VALUES (105,  'Фуфли' , 'Килограмм' , null);
+
+
+-- fetch some values
+SELECT * FROM Customers ;
+SELECT * FROM Orders ;
+
+-- first
+SELECT * FROM products
+WHERE Products.Price IS NULL AND  
+id IN (SELECT ProductID FROM Orders);
+
+
+-- second
+SELECT * FROM Products ;
+
+UPDATE products
+SET Price = Price * 1.05
+WHERE ID IN 
+(SELECT ProductID FROM Orders WHERE OrderDate >  NOW() - INTERVAL 30 DAY );
+
+SELECT * FROM Products ;
+
+-- third
+ALTER TABLE Orders
+ADD Title VARCHAR(255); 
+
+UPDATE Orders
+join Products On Orders.ProductID=Products.ID
+SET Title = concat( 'Заявка №' , OrderNumber, ' на приобретение ', Name );
+
+SELECT * FROM Orders ;
+
+
+
